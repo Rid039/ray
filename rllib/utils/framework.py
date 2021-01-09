@@ -65,8 +65,15 @@ def try_import_tf(error=False):
         logger.warning("Not importing TensorFlow for test purposes")
         return None, None, None
 
-    if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    # if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
+    #     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    
+    level = logging.ERROR
+    if 'TF_CPP_MIN_LOG_LEVEL' in os.environ:
+        level = (int(os.environ['TF_CPP_MIN_LOG_LEVEL'])+2)*10
+
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = str(level)
+    logging.getLogger('tensorflow').setLevel(level)
 
     # Try to reuse already imported tf module. This will avoid going through
     # the initial import steps below and thereby switching off v2_behavior
